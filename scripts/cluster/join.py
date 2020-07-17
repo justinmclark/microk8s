@@ -48,8 +48,8 @@ def get_connection_info(master_ip, master_port, token, callback_token=None, clus
 
     :return: the json response of the master
     """
-    can_connect = ping(master_ip)
-    if not can_connect:
+    reachable = ping(master_ip)
+    if not reachable:
         print("Master node is not reachable {}".format(master_ip))
         exit(1)
     cluster_agent_port = "25000"
@@ -107,9 +107,10 @@ def ping(ip):
     :param ip: ip of the node we're testing connection to
     :return: whether or not the IP is reachable (True or False)
     """
-    param = '-n' if platform.system().lower()=='windows' else '-c'
-    command = ['ping', param, '1', ip]
-    return subprocess.call(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0
+    param = "-" if platform.system().lower()=="windows" else "-c"
+    cmd = ["{snap}/usr/bin/ping", param, "1", ip]
+
+    return subprocess.call(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0
 
 
 def set_arg(key, value, file):
